@@ -44,9 +44,7 @@ const addBook = async (req, res) => {
 
 var serviceAccount = require("../service.json");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+
 const message = {
   notification: {
     title: 'New Book Added',
