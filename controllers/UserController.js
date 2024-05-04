@@ -15,7 +15,7 @@ const Login = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
-        res.status(200).json({ status: "success" });
+        res.status(200).json({ status: "success" ,data : user } );
     }
     catch (error) {
         res.status(500).json({ message: "Failed to login" });
