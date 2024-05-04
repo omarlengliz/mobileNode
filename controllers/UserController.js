@@ -2,6 +2,25 @@ const { sendEmail } = require("../config/mailer");
 const Users = require("../models/Users");
 const bcrypt= require("bcrypt");
 
+
+const Login = async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const user = await Users
+            .findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Invalid credentials" });
+        }
+        res.status(200).json({ status: "success" });
+    }
+    catch (error) {
+        res.status(500).json({ message: "Failed to login" });
+    }
+}
 const SignUp = async (req, res) => {
     const {firstname , lastname , username , email , phone , password , fcmToken} = req.body;
 
@@ -73,6 +92,7 @@ const verifyCode = async (req, res) => {
 
 module.exports = {
     SignUp , 
+    Login ,
     sendVerificationCode ,
     verifyCode
 
