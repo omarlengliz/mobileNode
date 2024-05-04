@@ -43,6 +43,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
+    fcmToken: {
+        type: String,
+        trim: true,
+    },
 });
 
 module.exports = mongoose.model("User", UserSchema);

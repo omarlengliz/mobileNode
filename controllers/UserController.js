@@ -3,14 +3,14 @@ const Users = require("../models/Users");
 const bcrypt= require("bcrypt");
 
 const SignUp = async (req, res) => {
-    const {firstname , lastname , username , email , phone , password} = req.body;
+    const {firstname , lastname , username , email , phone , password , fcmToken} = req.body;
 
     try {
 
         if(!firstname || !lastname || !username || !email || !phone || !password) return res.status(400).json({ "status" : "failed"  , message: "All fields are required" });
         const existedUser = await Users.findOne({ email });
         if (existedUser) {
-            return res.status(400).json({"status" : "failed"  , message: "Email already exists" });
+            return res.status(302).json({"status" : "failed"  , message: "Email already exists" });
         }
 
         
@@ -22,6 +22,7 @@ const SignUp = async (req, res) => {
             email,
             phone,
             password : hashedPassword , 
+            fcmToken
         });
         const result= await user.save();
         res.status(201).json({"status" : "success" , "data" : result});
