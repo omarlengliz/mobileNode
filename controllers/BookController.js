@@ -86,7 +86,17 @@ const addBook = async (req, res) => {
     };
 
     // Send notifications to all FCM tokens
-    const response = await admin.messaging().sendEachForMulticast(message);
+    const response = await admin.messaging().sendMulticast(message).then((response) => {
+      if (response.failureCount > 0) {
+        const failedTokens = [];
+        response.responses.forEach((resp, idx) => {
+          if (!resp.success) {
+            failedTokens.push(registrationTokens[idx]);
+          }
+        });
+        console.log('List of tokens that caused failures: ' + failedTokens);
+      }
+    });
 
     console.log("Successfully sent notifications:", response);
 
