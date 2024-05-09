@@ -58,7 +58,7 @@ const addBook = async (req, res) => {
     // Prepare notification message
     const message = {
       notification: {
-        title: `The ${name} book has been added!!`,
+        title:"Pages".tr,
         body: "Check it out on our application",
       },
       android: {
@@ -85,11 +85,14 @@ const addBook = async (req, res) => {
     };
     userTokens.forEach(async token => {
       message.token = token;
+      console.log("Sending notification to:"  , token);
       const response = await admin.messaging().send(message).then((res) => {
   
       });
       if(response){
         console.log("Notification sent successfully:", response);
+      }else{
+        console.log("Notification not sent");
       }
   
 
