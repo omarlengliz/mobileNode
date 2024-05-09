@@ -81,10 +81,12 @@ const addBook = async (req, res) => {
           image: "a",
         },
       },
+      tokens: userTokens, 
+
     };
 
     // Send notifications to all FCM tokens
-    const response = await admin.messaging().sendToDevice(userTokens, message);
+    const response = await admin.messaging().sendEachForMulticast(message);
 
     console.log("Successfully sent notifications:", response);
 
