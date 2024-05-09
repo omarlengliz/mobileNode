@@ -50,14 +50,15 @@ const addBook = async (req, res) => {
       imageUrl,
     });
 
-    var admin = require("firebase-admin");
+    const admin = require("firebase-admin");
 
-    const usersFCMToken = await Users.find({}).select("fcmToken");
-    console.log(usersFCMToken) ; 
+    const users = await Users.find({}).select("fcmToken");
+    const userTokens = users.map(user => user.fcmToken);
 
-    const messages = {
+    // Prepare notification message
+    const message = {
       notification: {
-        title: `The ${name} book has been added !! `,
+        title: `The ${name} book has been added!!`,
         body: "Check it out on our application",
       },
       android: {
@@ -80,24 +81,17 @@ const addBook = async (req, res) => {
           image: "a",
         },
       },
-      token:"cXd5PLMuSs2r73wPAe_89T:APA91bG5yBEPvExorTzwDFoTELPpbqCUWb-WFAajDuSZmL8PO1wqZOwlNF1CPqDUIBHyeFbND3yYGPfEBMCetcQWLVPlyujhfIw5vSKwPVfTqJXv7vZhzNqUqwdnAzmADUlZudbBiWrU",
     };
 
-    admin
-      .messaging()
-      .send(messages)
-      .then((response) => {
-        console.log("Successfully sent notification:", response);
-      })
-      .catch((error) => {
-        console.error("Error sending notification:", error);
-      });
+    // Send notifications to all FCM tokens
+    const response = await admin.messaging().sendToDevice(userTokens, message);
+
+    console.log("Successfully sent notifications:", response);
 
     res.status(201).json({ status: "success", data: book });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to add book", error: error.message });
+    console.error("Error sending notifications:", error);
+    res.status(500).json({ message: "Failed to send notifications", error: error.message });
   }
 };
 
