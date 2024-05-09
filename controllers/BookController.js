@@ -58,7 +58,7 @@ const addBook = async (req, res) => {
     // Prepare notification message
     const message = {
       notification: {
-        title:"Pages".tr,
+        title: `The ${name} book has been added!!`,
         body: "Check it out on our application",
       },
       android: {
