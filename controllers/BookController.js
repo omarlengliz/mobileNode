@@ -81,24 +81,22 @@ const addBook = async (req, res) => {
           image: "a",
         },
       },
-      tokens: userTokens, 
 
     };
-
-    // Send notifications to all FCM tokens
-    const response = await admin.messaging().sendMulticast(message).then((response) => {
-      if (response.failureCount > 0) {
-        const failedTokens = [];
-        response.responses.forEach((resp, idx) => {
-          if (!resp.success) {
-            failedTokens.push(userTokens[idx]);
-          }
-        });
-        console.log('List of tokens that caused failures: ' + failedTokens);
+    userTokens.forEach(async token => {
+      message.token = token;
+      const response = await admin.messaging().send(message).then((res) => {
+  
+      });
+      if(response){
+        console.log("Notification sent successfully:", response);
       }
+  
+
     });
 
-    console.log("Successfully sent notifications:", response);
+    // Send notifications to all FCM tokens
+
 
     res.status(201).json({ status: "success", data: book });
   } catch (error) {
