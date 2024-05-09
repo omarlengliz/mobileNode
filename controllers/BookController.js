@@ -53,6 +53,7 @@ const addBook = async (req, res) => {
     var admin = require("firebase-admin");
 
     const usersFCMToken = await Users.find({}).select("fcmToken");
+    console.log(usersFCMToken) ; 
 
     const messages = {
       notification: {
