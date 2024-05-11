@@ -88,12 +88,40 @@ const verifyCode = async (req, res) => {
     }
 }
 
+const getProfile = async (req,res)=>{
+    const {id} = req.params;
+    try {
+        const user = await Users.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json({ status: "success", data: user });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch user" });
+    }
+
+}
+
+const deleteProfile = async( req,res) => {
+    const {id} = req.params;
+    try {
+        const user = await Users.findByIdAndDelete(id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json({ status: "success", message: "User deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to delete user" });
+    }
+}
 
 
 module.exports = {
     SignUp , 
     Login ,
     sendVerificationCode ,
-    verifyCode
+    verifyCode ,
+    getProfile , 
+    deleteProfile
 
 }
