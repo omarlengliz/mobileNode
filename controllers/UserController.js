@@ -1,10 +1,34 @@
+const { JsonWebTokenError } = require("jsonwebtoken");
 const { sendEmail } = require("../config/mailer");
 const Users = require("../models/Users");
 const bcrypt= require("bcrypt");
-
+const jwt = require("jsonwebtoken");
 
 const Login = async (req, res) => {
     const { email, password } = req.body;
+    try {
+        const user = await Users
+            .findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        if(user.isBlocked){
+            return res.status(403).json({message:"User blocked until reativate "})
+        }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Invalid credentials" });
+        }
+        token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+        res.status(200).json({ status: "success" ,data : user } );
+    }
+    catch (error) {
+        res.status(500).json({ message: "Failed to login" });
+    }
+}
+
+const LoginAuthor = async (req, res) => {
+    const { email, password  , fcmToken} = req.body;
     try {
         const user = await Users
             .findOne({ email });
@@ -15,7 +39,13 @@ const Login = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
-        res.status(200).json({ status: "success" ,data : user } );
+        user.fcmToken = fcmToken
+        user.save() ;
+        token = jwt.sign({ id: user._id }, "secret", { expiresIn: "1d" });
+        res.status(200).json({ status: "success" ,data : {
+            user ,
+            token
+        } } );
     }
     catch (error) {
         res.status(500).json({ message: "Failed to login" });
@@ -114,6 +144,28 @@ const deleteProfile = async( req,res) => {
         res.status(500).json({ message: "Failed to delete user" });
     }
 }
+const blockUser = async (req,res)=>{
+    const {id} = req.params;
+    try {
+        const user = await Users.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        user.isBlocked = user.isBlocked ? false : true;
+        await user.save();
+        res.status(200).json({ status: "success", message: "User blocked successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to block user" });
+    }
+}
+const getUsers = async (req,res)=>{
+    try {
+        const users = await Users.find();
+        res.status(200).json({ status: "success", data: users });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch users" });
+    }
+}
 
 
 module.exports = {
@@ -122,6 +174,8 @@ module.exports = {
     sendVerificationCode ,
     verifyCode ,
     getProfile , 
-    deleteProfile
+    deleteProfile,LoginAuthor , 
+    blockUser
+    ,getUsers
 
 }

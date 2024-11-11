@@ -10,6 +10,29 @@ const fetchAll = async (req,res) =>{
     }
 } 
 
+const addGenre = async (req,res) =>{
+    const {name} = req.body;
+    try {
+        const genre = await Genre.create({name});
+        res.status(201).json({ status: "success", data: genre });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to add genre" , error: error.message });
+    }
+}
+const deleteGenre = async (req,res) =>{
+    const {id} = req.params;
+    try {
+        const genre = await Genre.findByIdAndDelete(id);
+        if (!genre) {
+            return res.status(404).json({ message: "Genre not found" });
+        }
+        res.status(200).json({ status: "success", message: "Genre deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to delete genre" });
+    }
+}
 module.exports = {
-    fetchAll
+    fetchAll,
+    addGenre , 
+    deleteGenre
 }
