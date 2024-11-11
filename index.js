@@ -12,17 +12,9 @@ app.use(express.urlencoded({ extended: true }));
 connectDB()
 const admin = require('firebase-admin');
 const serviceAccount = require('./service.json');
-const firebaseConfig = {
-  apiKey: "AIzaSyAGDb7df3HLeoOuySAM2L-qd3YtaapDRMo",
-  authDomain: "ktebi-3c8e4.firebaseapp.com",
-  projectId: "ktebi-3c8e4",
-  storageBucket: "ktebi-3c8e4.firebasestorage.app",
-  messagingSenderId: "184847981670",
-  appId: "1:184847981670:web:a5a67727edd47fea9fa1a7"
-};
-
-// Initialize Firebase
- initializeApp(firebaseConfig);
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 app.use('/uploads', express.static('uploads'));
 app.use(cors(
   {
