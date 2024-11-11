@@ -1,11 +1,10 @@
-const { JsonWebTokenError } = require("jsonwebtoken");
 const { sendEmail } = require("../config/mailer");
 const Users = require("../models/Users");
 const bcrypt= require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const Login = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password , fcmToken } = req.body;
     try {
         const user = await Users
             .findOne({ email });
@@ -19,6 +18,8 @@ const Login = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
+        user.fcmToken = fcmToken
+        user.save() ;
         token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
         res.status(200).json({ status: "success" ,data : user } );
     }
@@ -28,7 +29,7 @@ const Login = async (req, res) => {
 }
 
 const LoginAuthor = async (req, res) => {
-    const { email, password  , fcmToken} = req.body;
+    const { email, password  } = req.body;
     try {
         const user = await Users
             .findOne({ email });
@@ -39,8 +40,7 @@ const LoginAuthor = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid credentials" });
         }
-        user.fcmToken = fcmToken
-        user.save() ;
+        
         token = jwt.sign({ id: user._id }, "secret", { expiresIn: "1d" });
         res.status(200).json({ status: "success" ,data : {
             user ,
