@@ -7,6 +7,7 @@ const bookRoutes = require('./routes/BookRoutes');
 const statsRoutes = require('./routes/statsRoutes');
 const ratingRoutes = require('./routes/RatingRoutes');
 const path= require("path")
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -17,7 +18,7 @@ console.log(serviceAccount)
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
-
+console.log(path.join(__dirname, 'uploads'))
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors(
   {
