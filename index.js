@@ -6,6 +6,7 @@ const genreRoutes = require('./routes/GenreRoutes');
 const bookRoutes = require('./routes/BookRoutes');
 const statsRoutes = require('./routes/statsRoutes');
 const ratingRoutes = require('./routes/RatingRoutes');
+const path= require("path")
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
