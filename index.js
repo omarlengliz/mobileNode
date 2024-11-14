@@ -12,6 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 connectDB()
 const admin = require('firebase-admin');
 const serviceAccount = require('./service.json');
+console.log(serviceAccount)
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
