@@ -16,7 +16,8 @@ console.log(serviceAccount)
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
-app.use('/uploads', express.static('uploads'));
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cors(
   {
     origin: '*'
