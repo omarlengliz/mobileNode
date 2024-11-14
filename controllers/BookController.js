@@ -140,7 +140,7 @@ const addBook = async (req, res) => {
       // Fetch user tokens from the database
       const users = await Users.find({}).select("fcmToken");
       const userTokens = users.map((user) => user.fcmToken).filter((token) => !!token);
-      const img= "http://192.168.1.222:5000/"+ book.imageUrl.replaceAll('\\' , "/")
+      const img= "https://mobilenode-e3t8.onrender.com/"+ book.imageUrl.replaceAll('\\' , "/")
       if (userTokens.length > 0) {
         // Prepare notification message
         const message = {
